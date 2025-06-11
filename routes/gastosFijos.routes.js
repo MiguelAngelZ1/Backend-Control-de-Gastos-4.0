@@ -1,20 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { 
-  crearGastoFijo, 
-  obtenerGastosFijos,
-  actualizarGastoFijo,
-  eliminarGastoFijo
-} = require('../controllers/gastosFijos.controller');
-const autenticar = require('../middlewares/autenticacion');
+const gastosFijosController = require('../controllers/gastosFijos.controller');
+const authMiddleware = require('../middlewares/auth.middleware'); // Asegúrate de que esta ruta sea correcta
 
-// Aplicar middleware de autenticación a todas las rutas
-router.use(autenticar);
-
-// Rutas para Gastos Fijos
-router.post('/', crearGastoFijo);
-router.get('/', obtenerGastosFijos);
-router.put('/:id', actualizarGastoFijo);
-router.delete('/:id', eliminarGastoFijo);
+// Rutas protegidas
+router.get('/', authMiddleware.verificarToken, gastosFijosController.obtenerGastosFijos);
+router.post('/', authMiddleware.verificarToken, gastosFijosController.crearGastoFijo);
+router.put('/:id', authMiddleware.verificarToken, gastosFijosController.actualizarGastoFijo);
+router.delete('/:id', authMiddleware.verificarToken, gastosFijosController.eliminarGastoFijo);
 
 module.exports = router;
