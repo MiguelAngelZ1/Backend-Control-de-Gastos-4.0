@@ -17,7 +17,7 @@ app.use(cors({
     'http://127.0.0.1:5500',       // Alternativa local
     'https://tudominio.com',        // Tu dominio personalizado
     'https://github.com/MiguelAngelZ1/Backend-Control-de-Gastos-4.0.git',  // GitHub Pages
-    'https://tunombredeapp.onrender.com'    // URL de Render
+    'https://control-gastos-backend-q2el.onrender.com'    // URL de Render
   ],
   credentials: true
 }));
