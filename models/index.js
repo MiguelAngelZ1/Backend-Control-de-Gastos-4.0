@@ -1,5 +1,6 @@
-const { Usuario } = require('./Usuario');
-const { GastoFijo } = require('./GastoFijo');
+const Usuario = require('./Usuario');
+const GastoFijo = require('./GastoFijo');
+const sequelize = require('../config/database');
 
 // Configura las relaciones
 function setupRelations() {
@@ -11,5 +12,5 @@ module.exports = {
   Usuario,
   GastoFijo,
   setupRelations,
-  sequelize: require('../config/database')
+  sequelize
 };
