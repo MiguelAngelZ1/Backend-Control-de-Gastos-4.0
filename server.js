@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { sequelize } = require('./models');
+const { sequelize, setupRelations } = require('./models');
 const authRoutes = require('./routes/auth.routes');
 const gastosFijosRoutes = require('./routes/gastosFijos.routes');
 const authMiddleware = require('./middlewares/auth.middleware');
@@ -15,22 +15,22 @@ app.use(cors({
   origin: [
     'http://localhost:5500',        // Desarrollo local
     'http://127.0.0.1:5500',       // Alternativa local
-    'https://tudominio.com',        // Tu dominio personalizado (si lo tienes)
-    'https://tunombredeusuario.github.io',  // Si el frontend está en GitHub Pages
-    'https://tunombredeapp.onrender.com'    // URL de tu app en Render
+    'https://tudominio.com',        // Tu dominio personalizado
+    'https://github.com/MiguelAngelZ1/Backend-Control-de-Gastos-4.0.git',  // GitHub Pages
+    'https://tunombredeapp.onrender.com'    // URL de Render
   ],
   credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev')); // Logging de solicitudes
 
 // Configuración de cabeceras
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
 
@@ -50,7 +50,7 @@ app.use('/api/gastos-fijos', gastosFijosRoutes);
 
 // Manejador de errores global
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error global:', err);
   res.status(500).json({
     error: 'Error interno del servidor',
     message: process.env.NODE_ENV === 'development' ? err.message : undefined
@@ -65,6 +65,9 @@ app.use((req, res) => {
 // Sincronizar modelos y arrancar el servidor
 const iniciarServidor = async () => {
   try {
+    // Inicializar relaciones
+    setupRelations();
+    
     // Verificar conexión a la base de datos
     await sequelize.authenticate();
     console.log('Conexión a la base de datos establecida correctamente.');
@@ -97,4 +100,7 @@ process.on('SIGINT', async () => {
 });
 
 // Iniciar la aplicación
-iniciarServidor();
+iniciarServidor().catch(error => {
+  console.error('Error al iniciar la aplicación:', error);
+  process.exit(1);
+});
