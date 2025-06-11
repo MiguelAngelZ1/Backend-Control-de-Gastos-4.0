@@ -19,6 +19,14 @@ const GastoFijo = sequelize.define('GastoFijo', {
     type: DataTypes.ENUM('Pagado', 'Pendiente'),
     allowNull: false,
     defaultValue: 'Pendiente'
+  },
+  usuario_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'usuarios',
+      key: 'id'
+    }
   }
 }, {
   tableName: 'gastos_fijos',
