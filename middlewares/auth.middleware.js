@@ -3,7 +3,7 @@ const { Usuario } = require('../models');
 
 exports.verificarToken = async (req, res, next) => {
   try {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.headers.authorization?.split(' ')[1];
     
     if (!token) {
       return res.status(401).json({ error: 'No se proporcionó token de autenticación' });
@@ -20,6 +20,6 @@ exports.verificarToken = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('Error en autenticación:', error);
-    res.status(401).json({ error: 'Token inválido o expirado' });
+    return res.status(401).json({ error: 'Token inválido o expirado' });
   }
 };
